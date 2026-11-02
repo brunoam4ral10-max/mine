@@ -1,13 +1,19 @@
 # Minecraft · Item Viewer 3D
 
-Viewer interativo de espadas do Minecraft construído com **HTML + CSS + JavaScript (Three.js)**.
-A sprite vanilla 16×16 é reconstruída **voxel a voxel** em uma malha 3D real — cada pixel opaco
-vira um bloco com relevo, faces laterais sombreadas e textura *nearest-neighbor*.
+Dois ambientes 3D em **HTML + CSS + JavaScript (Three.js)**, ambos 100% autossuficientes:
+
+| Página | O que é |
+|---|---|
+| **`index.html`** | Item viewer da espada: sprite vanilla 16×16 reconstruída **voxel a voxel**, com 6 materiais, vista explodida e órbita livre. |
+| **`casa.html`** | Casa de fazenda em estilo Minecraft **totalmente 3D e procedural**, com navegação cinematográfica por scroll, ciclo dia/noite e hotspots interativos. |
+
+As páginas são ligadas entre si (ícone ⌂ no topo do viewer / link «voltar» na casa).
 
 ## Como usar
 
-Abra **`index.html`** diretamente no navegador (duplo clique). Não precisa de servidor, build,
-npm ou internet: Three.js, a fonte pixelada e as 6 texturas estão embutidos no próprio arquivo.
+Abra **`index.html`** ou **`casa.html`** diretamente no navegador (duplo clique). Não precisa de
+servidor, build, npm ou internet: Three.js, a fonte pixelada, as texturas e os modelos estão
+embutidos/gerados por código em cada arquivo.
 
 > Para uma prévia ao vivo, rode `python3 -m http.server 8080` nesta pasta e acesse
 > `http://localhost:8080`.
@@ -50,22 +56,49 @@ seis arquivos, então a troca de textura é instantânea, sem reconstruir a geom
 - **Responsivo**: a distância da câmera é recalculada pelo aspecto da tela; HUD reorganizado
   para celulares, com suporte a gestos de pinça.
 
+## A casa 3D (`casa.html`)
+
+Inspirada em [woanminecraftfolio.com](https://www.woanminecraftfolio.com/) e em construções
+cottagecore do Minecraft. **Nenhum modelo `.glb`/`.obj` é carregado**: o mundo é gerado por
+código a partir de ~12.000 blocos.
+
+- Frontão empenado escalonado de tijolos de pedra com reboco claro, janela no sótão, chaminé de
+  tijolos e telhado de tábuas escuras; paredes de reboco com vigas de carvalho escuro.
+- Varanda com pérgula, videiras penduradas, jardineiras, placa *WELCOME*, vasos de rosas,
+  floreiras sob as janelas, escadas e caminho de cascalho.
+- Jardim com canteiros murados (flores e trigo), postes de lanterna, *sea lantern* luminosa,
+  hortas em terraços ao fundo, árvores, nuvens e montanhas.
+- **5 pontos de vista** com câmera interpolada (scroll, teclas `1–5` ou marcadores laterais),
+  órbita livre por arraste, zoom por pinça/`+`/`−`, auto-rotação após 4 s de inatividade.
+- **Ciclo dia · entardecer · noite** (`T`): céu, névoa, luzes, estrelas e halos mudam juntos.
+- **5 hotspots** projetados do 3D para o HTML abrem fichas sobre cada parte da casa.
+- Som ambiente procedural via WebAudio (`S`), modal de ajuda (`?`), tela de carregamento e HUD responsivo.
+
+Tecnicamente: um **atlas de 32 texturas pixel art 16×16** desenhado em `<canvas>`, um único
+`BufferGeometry` com faces internas eliminadas (1 draw call), vegetação em planos cruzados com
+`alphaTest`, sombras `PCFSoft`, luzes de ponto reais nas lanternas e `ACESFilmicToneMapping`.
+
 ## Estrutura
 
 ```
-index.html                  ← arquivo final, autossuficiente (entregável)
+index.html                  ← item viewer da espada (autossuficiente)
+casa.html                   ← casa 3D procedural (autossuficiente)
 README.md
-build.py                    ← gera index.html a partir do template
-src/template.html           ← HTML + CSS + JS legíveis (edite aqui)
+build.py                    ← gera index.html
+build_house.py              ← gera casa.html
+src/template.html           ← HTML + CSS + JS do viewer
+src/house-template.html     ← HTML + CSS + JS da casa
 vendor/three.min.js         ← Three.js r128 (MIT)
 assets/textures/*.png       ← 6 texturas vanilla 16×16
 assets/press-start-2p-latin.woff2
+preview.png / casa-preview.png
 ```
 
-Para alterar o viewer, edite `src/template.html` e rode:
+Para alterar algo, edite o template correspondente e rode:
 
 ```bash
-python3 build.py       # requer Pillow: pip install pillow
+python3 build.py            # gera index.html (requer Pillow)
+python3 build_house.py      # gera casa.html
 ```
 
 ## Créditos
